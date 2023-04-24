@@ -4,10 +4,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../pages/pages.dart';
 
-part 'routes.g.dart';
-
-@riverpod
-GoRouter goRouter(GoRouterRef ref) {
+final goRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: HomePage.routePath,
     debugLogDiagnostics: true,
@@ -43,4 +40,4 @@ GoRouter goRouter(GoRouterRef ref) {
       ),
     ],
   );
-}
+});

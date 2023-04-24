@@ -58,70 +58,83 @@ class AttendeesPage extends ConsumerWidget {
             ],
           ),
           Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) => Slidable(
-                endActionPane: ActionPane(
-                  motion: const ScrollMotion(),
-                  extentRatio: 0.2,
-                  children: [
-                    SlidableAction(
-                      autoClose: true,
-                      label: 'delete',
-                      onPressed: (context) {
-                        ref.read(attendeesControleerProvider.notifier).delete(
-                              state.attendees[index].id,
-                            );
-                      },
-                      icon: Icons.delete,
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.red,
+            child: state.attendees.isEmpty
+                ? Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: const [
+                        Icon(Icons.warning_amber_rounded),
+                        Text('no data'),
+                      ],
                     ),
-                    SlidableAction(
-                      autoClose: true,
-                      label: 'update',
-                      onPressed: (context) {
-                        showModalBottomSheet(
-                          elevation: 100,
-                          backgroundColor: Colors.transparent,
-                          context: context,
-                          builder: (context) => Container(
-                            decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(100),
-                                topRight: Radius.circular(100),
-                              ),
-                            ),
-                            clipBehavior: Clip.antiAlias,
-                            margin: const EdgeInsets.all(20),
-                            child: AttendeeDetailsWidget(
-                              attendee: state.attendees[index],
-                              onEdit: ({email, image, name, password}) {
-                                ref
-                                    .read(attendeesControleerProvider.notifier)
-                                    .update(
-                                      state.attendees[index].id,
-                                      email: email,
-                                      password: password,
-                                      image: image,
-                                      name: name,
-                                    );
-                              },
-                            ),
+                  )
+                : ListView.builder(
+                    itemBuilder: (context, index) => Slidable(
+                      endActionPane: ActionPane(
+                        motion: const ScrollMotion(),
+                        extentRatio: 0.2,
+                        children: [
+                          SlidableAction(
+                            autoClose: true,
+                            label: 'delete',
+                            onPressed: (context) {
+                              ref
+                                  .read(attendeesControleerProvider.notifier)
+                                  .delete(
+                                    state.attendees[index].id,
+                                  );
+                            },
+                            icon: Icons.delete,
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.red,
                           ),
-                        );
-                      },
-                      icon: Icons.update,
-                      foregroundColor: Colors.white,
-                      backgroundColor: Colors.amber,
-                    )
-                  ],
-                ),
-                child: AttendeeCardWidget(
-                  state.attendees[index],
-                ),
-              ),
-              itemCount: state.attendees.length,
-            ),
+                          SlidableAction(
+                            autoClose: true,
+                            label: 'update',
+                            onPressed: (context) {
+                              showModalBottomSheet(
+                                elevation: 100,
+                                backgroundColor: Colors.transparent,
+                                context: context,
+                                builder: (context) => Container(
+                                  decoration: const BoxDecoration(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(20),
+                                      topRight: Radius.circular(20),
+                                    ),
+                                  ),
+                                  clipBehavior: Clip.antiAlias,
+                                  margin: const EdgeInsets.all(20),
+                                  child: AttendeeDetailsWidget(
+                                    attendee: state.attendees[index],
+                                    onEdit: ({email, image, name, password}) {
+                                      ref
+                                          .read(attendeesControleerProvider
+                                              .notifier)
+                                          .update(
+                                            state.attendees[index].id,
+                                            email: email,
+                                            password: password,
+                                            image: image,
+                                            name: name,
+                                          );
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                            icon: Icons.update,
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.amber,
+                          )
+                        ],
+                      ),
+                      child: AttendeeCardWidget(
+                        state.attendees[index],
+                      ),
+                    ),
+                    itemCount: state.attendees.length,
+                  ),
           ),
         ],
       ),

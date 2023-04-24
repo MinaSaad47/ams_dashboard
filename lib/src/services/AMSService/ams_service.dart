@@ -108,3 +108,14 @@ AttendeesService attendeesService(AttendeesServiceRef ref) {
 
   return AttendeesService(dio, baseUrl: '${EnvVars.apiUrl}/api/attendees');
 }
+
+@riverpod
+InstructorsService instructorsService(InstructorsServiceRef ref) {
+  final dio = Dio();
+
+  dio.options.headers.addAll({
+    'Authorization': 'Bearer ${EnvVars.apiToken}',
+  });
+
+  return InstructorsService(dio, baseUrl: '${EnvVars.apiUrl}/api/instructors');
+}
