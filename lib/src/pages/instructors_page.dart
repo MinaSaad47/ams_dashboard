@@ -1,9 +1,11 @@
-import 'package:ams_dashboard/src/controllers/instructors_controller.dart';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 
+import '../controllers/controllers.dart';
 import '../widgets/widgets.dart';
 
 class InstructorsPage extends ConsumerWidget {
@@ -17,11 +19,19 @@ class InstructorsPage extends ConsumerWidget {
     final state = ref.watch(instructorsControleerProvider);
 
     ref.listen(instructorsControleerProvider, (previous, next) {
+      var submitted = false;
       next.whenOrNull(
-        updated: (attendees, message) {
-          context.pop();
+        updated: (instructors, message) {
+          submitted = true;
+        },
+        created: (instructors, message) {
+          submitted = true;
         },
       );
+
+      if (submitted) {
+        context.pop();
+      }
     });
 
     return Scaffold(
@@ -30,7 +40,39 @@ class InstructorsPage extends ConsumerWidget {
         title: const Text(routeName),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showModalBottomSheet(
+                elevation: 100,
+                backgroundColor: Colors.transparent,
+                context: context,
+                builder: (context) => Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  margin: const EdgeInsets.all(20),
+                  child: AttendeeCreateWidget(
+                    onSubmit: ({
+                      required String name,
+                      required String email,
+                      required String password,
+                      required int number,
+                      File? image,
+                    }) {
+                      ref.watch(instructorsControleerProvider.notifier).create(
+                            name: name,
+                            number: number,
+                            email: email,
+                            password: password,
+                          );
+                    },
+                  ),
+                ),
+              );
+            },
             icon: const Icon(Icons.add_box_outlined),
           ),
           IconButton(
@@ -106,9 +148,9 @@ class InstructorsPage extends ConsumerWidget {
                                   ),
                                   clipBehavior: Clip.antiAlias,
                                   margin: const EdgeInsets.all(20),
-                                  child: AttendeeDetailsWidget(
-                                    attendee: state.instructors[index],
-                                    onEdit: ({email, image, name, password}) {
+                                  child: InstructorUpdateWidget(
+                                    instructor: state.instructors[index],
+                                    onSubmit: ({email, image, name, password}) {
                                       ref
                                           .read(instructorsControleerProvider
                                               .notifier)

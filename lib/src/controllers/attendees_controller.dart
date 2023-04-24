@@ -12,31 +12,31 @@ part 'attendees_controller.g.dart';
 class AttendeesState with _$AttendeesState {
   const factory AttendeesState.initial({
     @Default([]) List<UserDto> attendees,
-  }) = Retreived;
+  }) = AttendeesInitial;
   const factory AttendeesState.loaded({
     required List<UserDto> attendees,
     required String message,
-  }) = Loaded;
+  }) = AttendeesLoaded;
   const factory AttendeesState.deleted({
     @Default([]) List<UserDto> attendees,
     required String message,
-  }) = Deleted;
+  }) = AttendeesDeleted;
   const factory AttendeesState.created({
     required List<UserDto> attendees,
     required String message,
-  }) = Created;
+  }) = AttendeesCreated;
   const factory AttendeesState.updated({
     @Default([]) List<UserDto> attendees,
     required String message,
-  }) = Updated;
+  }) = AttendeesUpdated;
   const factory AttendeesState.loading({
     @Default([]) List<UserDto> attendees,
     required String message,
-  }) = Loading;
+  }) = AttendeesLoading;
   const factory AttendeesState.failed({
     @Default([]) List<UserDto> attendees,
     required ServiceError error,
-  }) = Failed;
+  }) = AttendeesFailed;
 }
 
 @riverpod

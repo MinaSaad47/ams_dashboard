@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:ams_dashboard/src/controllers/controllers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,11 +19,19 @@ class AttendeesPage extends ConsumerWidget {
     final state = ref.watch(attendeesControleerProvider);
 
     ref.listen(attendeesControleerProvider, (previous, next) {
+      var submitted = false;
       next.whenOrNull(
         updated: (attendees, message) {
-          context.pop();
+          submitted = true;
+        },
+        created: (attendees, message) {
+          submitted = true;
         },
       );
+
+      if (submitted) {
+        context.pop();
+      }
     });
 
     return Scaffold(
@@ -30,7 +40,39 @@ class AttendeesPage extends ConsumerWidget {
         title: const Text(routeName),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              showModalBottomSheet(
+                elevation: 100,
+                backgroundColor: Colors.transparent,
+                context: context,
+                builder: (context) => Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20),
+                    ),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  margin: const EdgeInsets.all(20),
+                  child: AttendeeCreateWidget(
+                    onSubmit: ({
+                      required String name,
+                      required String email,
+                      required String password,
+                      required int number,
+                      File? image,
+                    }) {
+                      ref.watch(attendeesControleerProvider.notifier).create(
+                            name: name,
+                            number: number,
+                            email: email,
+                            password: password,
+                          );
+                    },
+                  ),
+                ),
+              );
+            },
             icon: const Icon(Icons.add_box_outlined),
           ),
           IconButton(
@@ -105,9 +147,9 @@ class AttendeesPage extends ConsumerWidget {
                                   ),
                                   clipBehavior: Clip.antiAlias,
                                   margin: const EdgeInsets.all(20),
-                                  child: AttendeeDetailsWidget(
-                                    attendee: state.attendees[index],
-                                    onEdit: ({email, image, name, password}) {
+                                  child: AttendeeUpdateWidget(
+                                    onUpdate: state.attendees[index],
+                                    onSubmit: ({email, image, name, password}) {
                                       ref
                                           .read(attendeesControleerProvider
                                               .notifier)

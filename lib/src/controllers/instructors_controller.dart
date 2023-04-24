@@ -12,31 +12,31 @@ part 'instructors_controller.g.dart';
 class InstructorsState with _$InstructorsState {
   const factory InstructorsState.initial({
     @Default([]) List<UserDto> instructors,
-  }) = Retreived;
+  }) = InstructorsRetreived;
   const factory InstructorsState.loaded({
     required List<UserDto> instructors,
     required String message,
-  }) = Loaded;
+  }) = InstructorsLoaded;
   const factory InstructorsState.deleted({
     @Default([]) List<UserDto> instructors,
     required String message,
-  }) = Deleted;
+  }) = InstructorsDeleted;
   const factory InstructorsState.created({
     required List<UserDto> instructors,
     required String message,
-  }) = Created;
+  }) = InstructorsCreated;
   const factory InstructorsState.updated({
     @Default([]) List<UserDto> instructors,
     required String message,
-  }) = Updated;
+  }) = InstructorsUpdated;
   const factory InstructorsState.loading({
     @Default([]) List<UserDto> instructors,
     required String message,
-  }) = Loading;
+  }) = InstructorsLoading;
   const factory InstructorsState.failed({
     @Default([]) List<UserDto> instructors,
     required ServiceError error,
-  }) = Failed;
+  }) = InstructorsFailed;
 }
 
 @riverpod
