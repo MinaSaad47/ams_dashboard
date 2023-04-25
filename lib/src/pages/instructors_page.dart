@@ -8,14 +8,27 @@ import 'package:go_router/go_router.dart';
 import '../controllers/controllers.dart';
 import '../widgets/widgets.dart';
 
-class InstructorsPage extends ConsumerWidget {
+class InstructorsPage extends ConsumerStatefulWidget {
   const InstructorsPage({super.key});
 
   static const String routePath = '/instructors';
   static const String routeName = 'Instructors';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<InstructorsPage> createState() => _InstructorsPageState();
+}
+
+class _InstructorsPageState extends ConsumerState<InstructorsPage> {
+  @override
+  void initState() {
+    super.initState();
+    Future(() {
+      ref.read(instructorsControleerProvider.notifier).retreive();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(instructorsControleerProvider);
 
     ref.listen(instructorsControleerProvider, (previous, next) {
@@ -27,6 +40,9 @@ class InstructorsPage extends ConsumerWidget {
         created: (instructors, message) {
           submitted = true;
         },
+        initial: (instructors) {
+          ref.read(instructorsControleerProvider.notifier).retreive();
+        },
       );
 
       if (submitted) {
@@ -37,7 +53,7 @@ class InstructorsPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(routeName),
+        title: const Text(InstructorsPage.routeName),
         actions: [
           IconButton(
             onPressed: () {

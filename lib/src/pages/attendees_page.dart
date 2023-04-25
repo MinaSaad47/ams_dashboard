@@ -8,14 +8,27 @@ import 'package:go_router/go_router.dart';
 
 import '../widgets/widgets.dart';
 
-class AttendeesPage extends ConsumerWidget {
+class AttendeesPage extends ConsumerStatefulWidget {
   const AttendeesPage({super.key});
 
   static const String routePath = '/attendees';
   static const String routeName = 'Attendees';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AttendeesPage> createState() => _AttendeesPageState();
+}
+
+class _AttendeesPageState extends ConsumerState<AttendeesPage> {
+  @override
+  void initState() {
+    super.initState();
+    Future(() {
+      ref.read(attendeesControleerProvider.notifier).retreive();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final state = ref.watch(attendeesControleerProvider);
 
     ref.listen(attendeesControleerProvider, (previous, next) {
@@ -37,7 +50,7 @@ class AttendeesPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: const Text(routeName),
+        title: const Text(AttendeesPage.routeName),
         actions: [
           IconButton(
             onPressed: () {
@@ -148,7 +161,7 @@ class AttendeesPage extends ConsumerWidget {
                                   clipBehavior: Clip.antiAlias,
                                   margin: const EdgeInsets.all(20),
                                   child: AttendeeUpdateWidget(
-                                    onUpdate: state.attendees[index],
+                                    attendee: state.attendees[index],
                                     onSubmit: ({email, image, name, password}) {
                                       ref
                                           .read(attendeesControleerProvider

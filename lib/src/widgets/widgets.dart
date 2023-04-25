@@ -6,3 +6,6 @@ export './instructor_update_widget.dart';
 export './attendee_create_widget.dart';
 export './attendee_update_widget.dart';
 export './instructor_create_widget.dart';
+export './subject_card_widget.dart';
+export './subject_update_widget.dart';
+export './subject_create_widget.dart';

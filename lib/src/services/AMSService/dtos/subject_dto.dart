@@ -12,7 +12,7 @@ class SubjectDto with _$SubjectDto {
   const factory SubjectDto({
     required String id,
     required String name,
-    required UserDto instructor,
+    UserDto? instructor,
     required DateTime createAt,
     @ScheduleJsonConverter() required CronSchedule cronExpr,
     required DateTime updatedAt,
@@ -20,4 +20,26 @@ class SubjectDto with _$SubjectDto {
 
   factory SubjectDto.fromJson(Map<String, Object?> json) =>
       _$SubjectDtoFromJson(json);
+}
+
+@freezed
+class CreateSubjectDto with _$CreateSubjectDto {
+  const factory CreateSubjectDto({
+    required String name,
+    required String cronExpr,
+  }) = _CreateSubjectDto;
+
+  factory CreateSubjectDto.fromJson(Map<String, Object?> json) =>
+      _$CreateSubjectDtoFromJson(json);
+}
+
+@freezed
+class UpdateSubjectDto with _$UpdateSubjectDto {
+  const factory UpdateSubjectDto({
+    String? name,
+    String? cronExpr,
+  }) = _UpdateSubjectDto;
+
+  factory UpdateSubjectDto.fromJson(Map<String, Object?> json) =>
+      _$UpdateSubjectDtoFromJson(json);
 }

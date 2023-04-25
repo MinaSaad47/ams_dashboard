@@ -82,15 +82,13 @@ class AttendeeCreateWidget extends StatelessWidget {
                       ElevatedButton(
                         onPressed: () {
                           final state = formKey.currentState;
-                          if (state != null) {
-                            state.save();
-                            onSubmit?.call(
-                              name: state.value['name'],
-                              email: state.value['email'],
-                              password: state.value['password'],
-                              number: int.parse(state.value['number']),
-                            );
-                          }
+                          if (state == null || !state.saveAndValidate()) return;
+                          onSubmit?.call(
+                            name: state.value['name'],
+                            email: state.value['email'],
+                            password: state.value['password'],
+                            number: int.parse(state.value['number']),
+                          );
                         },
                         child: const ListTile(
                           title: Center(child: Text('create')),

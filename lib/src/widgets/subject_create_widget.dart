@@ -1,21 +1,17 @@
-import 'dart:io';
-
+import 'package:easy_cron/easy_cron.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 
-class InstructorCreateWidget extends StatelessWidget {
-  const InstructorCreateWidget({
+class SubjectCreateWidget extends StatelessWidget {
+  const SubjectCreateWidget({
     super.key,
     this.onSubmit,
   });
 
   final void Function({
     required String name,
-    required String email,
-    required String password,
-    required int number,
-    File? image,
+    required String cronExpr,
   })? onSubmit;
 
   @override
@@ -44,38 +40,20 @@ class InstructorCreateWidget extends StatelessWidget {
                     FormBuilderTextField(
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'email',
+                        labelText: 'cron expr',
                       ),
-                      name: 'email',
-                      validator: FormBuilderValidators.compose(
-                        [
-                          FormBuilderValidators.required(),
-                          FormBuilderValidators.email(),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    FormBuilderTextField(
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'number',
-                      ),
-                      name: 'number',
-                      validator: FormBuilderValidators.compose(
-                        [
-                          FormBuilderValidators.required(),
-                          FormBuilderValidators.numeric(),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    FormBuilderTextField(
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'password',
-                      ),
-                      name: 'password',
-                      validator: FormBuilderValidators.required(),
+                      name: 'cronExpr',
+                      validator: FormBuilderValidators.compose([
+                        FormBuilderValidators.required(),
+                        (value) {
+                          try {
+                            UnixCronParser().parse(value!);
+                          } catch (error, __) {
+                            return error.toString();
+                          }
+                          return null;
+                        }
+                      ]),
                     ),
                     if (onSubmit != null) ...[
                       const Spacer(),
@@ -85,9 +63,7 @@ class InstructorCreateWidget extends StatelessWidget {
                           if (state == null || !state.saveAndValidate()) return;
                           onSubmit?.call(
                             name: state.value['name'],
-                            email: state.value['email'],
-                            password: state.value['password'],
-                            number: int.parse(state.value['number']),
+                            cronExpr: state.value['cronExpr'],
                           );
                         },
                         child: const ListTile(

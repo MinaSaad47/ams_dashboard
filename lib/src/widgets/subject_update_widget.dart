@@ -1,24 +1,20 @@
-import 'dart:io';
-
-import 'package:ams_dashboard/src/common/env.dart';
 import 'package:ams_dashboard/src/services/AMSService/dtos/dtos.dart';
+import 'package:easy_cron/easy_cron.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
-class AttendeeUpdateWidget extends StatelessWidget {
-  const AttendeeUpdateWidget({
+class SubjectUpdateWidget extends StatelessWidget {
+  const SubjectUpdateWidget({
     super.key,
-    required this.attendee,
+    required this.subject,
     this.onSubmit,
   });
 
-  final UserDto attendee;
+  final SubjectDto subject;
 
   final void Function({
     String? name,
-    String? email,
-    String? password,
-    File? image,
+    String? cronExpr,
   })? onSubmit;
 
   @override
@@ -27,10 +23,6 @@ class AttendeeUpdateWidget extends StatelessWidget {
     return Card(
       child: Row(
         children: [
-          if (attendee.image != null)
-            Image.network(
-              '${EnvVars.apiUrl}/${attendee.image}',
-            ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -44,24 +36,24 @@ class AttendeeUpdateWidget extends StatelessWidget {
                         labelText: 'name',
                       ),
                       name: 'name',
-                      initialValue: attendee.name,
+                      initialValue: subject.name,
                     ),
                     const SizedBox(height: 10),
                     FormBuilderTextField(
                       decoration: const InputDecoration(
                         border: OutlineInputBorder(),
-                        labelText: 'email',
+                        labelText: 'cron expr',
                       ),
-                      name: 'email',
-                      initialValue: attendee.email,
-                    ),
-                    const SizedBox(height: 10),
-                    FormBuilderTextField(
-                      decoration: const InputDecoration(
-                        border: OutlineInputBorder(),
-                        labelText: 'password',
-                      ),
-                      name: 'password',
+                      name: 'cronExpr',
+                      initialValue: subject.cronExpr.toString(),
+                      validator: (value) {
+                        try {
+                          UnixCronParser().parse(value!);
+                        } catch (error, __) {
+                          return error.toString();
+                        }
+                        return null;
+                      },
                     ),
                     if (onSubmit != null) ...[
                       const Spacer(),
@@ -71,8 +63,7 @@ class AttendeeUpdateWidget extends StatelessWidget {
                           if (state == null || !state.saveAndValidate()) return;
                           onSubmit?.call(
                             name: state.value['name'],
-                            email: state.value['email'],
-                            password: state.value['password'],
+                            cronExpr: state.value['cronExpr'],
                           );
                         },
                         child: const ListTile(

@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:ams_dashboard/src/services/AMSService/dtos/dtos.dart';
 import 'package:dio/dio.dart';
+import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:retrofit/retrofit.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../common/env.dart';
+import '../../common/common.dart';
 
 part 'ams_service.g.dart';
 
@@ -85,7 +86,7 @@ abstract class SubjectsService {
 
   @POST('')
   Future<ResponseDto<SubjectDto>> createOne(
-    @Body() CreateUserDto create,
+    @Body() CreateSubjectDto create,
   );
 
   @DELETE('/{id}')
@@ -94,28 +95,50 @@ abstract class SubjectsService {
   @PATCH('/{id}')
   Future<ResponseDto<SubjectDto>> updateOne(
     @Path() String id,
-    @Body() UpdateUserDto update,
+    @Body() UpdateSubjectDto update,
   );
 }
 
 @riverpod
-AttendeesService attendeesService(AttendeesServiceRef ref) {
-  final dio = Dio();
-
+Dio dio(DioRef ref) {
+  var dio = Dio();
   dio.options.headers.addAll({
     'Authorization': 'Bearer ${EnvVars.apiToken}',
   });
+  dio.interceptors.add(
+    PrettyDioLogger(
+      requestHeader: true,
+      requestBody: true,
+      responseBody: true,
+      responseHeader: false,
+      error: true,
+      compact: true,
+      maxWidth: 90,
+    ),
+  );
+  return dio;
+}
 
-  return AttendeesService(dio, baseUrl: '${EnvVars.apiUrl}/api/attendees');
+@riverpod
+AttendeesService attendeesService(AttendeesServiceRef ref) {
+  return AttendeesService(
+    ref.watch(dioProvider),
+    baseUrl: '${EnvVars.apiUrl}/api/attendees',
+  );
 }
 
 @riverpod
 InstructorsService instructorsService(InstructorsServiceRef ref) {
-  final dio = Dio();
+  return InstructorsService(
+    ref.watch(dioProvider),
+    baseUrl: '${EnvVars.apiUrl}/api/instructors',
+  );
+}
 
-  dio.options.headers.addAll({
-    'Authorization': 'Bearer ${EnvVars.apiToken}',
-  });
-
-  return InstructorsService(dio, baseUrl: '${EnvVars.apiUrl}/api/instructors');
+@riverpod
+SubjectsService subjectsService(SubjectsServiceRef ref) {
+  return SubjectsService(
+    ref.watch(dioProvider),
+    baseUrl: '${EnvVars.apiUrl}/api/subjects',
+  );
 }

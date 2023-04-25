@@ -13,10 +13,10 @@ class InstructorsState with _$InstructorsState {
   const factory InstructorsState.initial({
     @Default([]) List<UserDto> instructors,
   }) = InstructorsRetreived;
-  const factory InstructorsState.loaded({
+  const factory InstructorsState.retrieved({
     required List<UserDto> instructors,
     required String message,
-  }) = InstructorsLoaded;
+  }) = InstructorsRetrieved;
   const factory InstructorsState.deleted({
     @Default([]) List<UserDto> instructors,
     required String message,
@@ -50,7 +50,7 @@ class InstructorsControleer extends _$InstructorsControleer {
   }
 
   Future<void> retreive() async {
-    state = InstructorsState.loaded(
+    state = InstructorsState.loading(
       instructors: state.instructors,
       message: 'loading attendees',
     );
@@ -58,7 +58,7 @@ class InstructorsControleer extends _$InstructorsControleer {
     final response = await _service.getAll();
 
     state = response.when(
-      success: (message, data) => InstructorsState.loaded(
+      success: (message, data) => InstructorsState.retrieved(
         instructors: data!,
         message: message,
       ),

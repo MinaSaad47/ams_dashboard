@@ -13,10 +13,10 @@ class AttendeesState with _$AttendeesState {
   const factory AttendeesState.initial({
     @Default([]) List<UserDto> attendees,
   }) = AttendeesInitial;
-  const factory AttendeesState.loaded({
+  const factory AttendeesState.retrieved({
     required List<UserDto> attendees,
     required String message,
-  }) = AttendeesLoaded;
+  }) = AttendeesRetrieved;
   const factory AttendeesState.deleted({
     @Default([]) List<UserDto> attendees,
     required String message,
@@ -50,7 +50,7 @@ class AttendeesControleer extends _$AttendeesControleer {
   }
 
   Future<void> retreive() async {
-    state = AttendeesState.loaded(
+    state = AttendeesState.loading(
       attendees: state.attendees,
       message: 'loading attendees',
     );
@@ -58,7 +58,7 @@ class AttendeesControleer extends _$AttendeesControleer {
     final response = await _service.getAll();
 
     state = response.when(
-      success: (message, data) => AttendeesState.loaded(
+      success: (message, data) => AttendeesState.retrieved(
         attendees: data!,
         message: message,
       ),
