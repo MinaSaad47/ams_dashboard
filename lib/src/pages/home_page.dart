@@ -12,8 +12,12 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      drawer: const DrawerWidget(),
-      body: const Center(child: Text(routeName)),
+      body: Row(
+        children: const [
+          DrawerWidget(),
+          Expanded(child: Center(child: Text(routeName))),
+        ],
+      ),
     );
   }
 }
