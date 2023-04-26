@@ -15,6 +15,7 @@ dependencies:
   easy_cron: ^0.9.2
   envied: ^0.3.0
   equatable: ^2.0.5
+  file_picker: ^5.2.11
   flutter:
     sdk: flutter
   flutter_form_builder: ^8.0.0
@@ -36,6 +37,7 @@ dependencies:
   rxdart: ^0.27.7
   shared_preferences: ^2.1.0
   sliding_up_panel: ^2.0.0+1
+  transparent_image: ^2.0.1
 
 dev_dependencies:
   flutter_test:

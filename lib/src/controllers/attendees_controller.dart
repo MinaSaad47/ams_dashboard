@@ -140,16 +140,19 @@ class AttendeesControleer extends _$AttendeesControleer {
 
     state = await response.when(
       success: (message, data) async {
-        if (image != null) {
-          final response = await _service.uploadPhoto(id, image);
-          if (response is ServiceError) {
-            return AttendeesState.failed(error: response as ServiceError);
-          }
+        if (image == null) {
+          return AttendeesState.updated(
+            message: message,
+            attendees: [data!, ...state.attendees.where((e) => e.id != id)],
+          );
         }
-
-        return AttendeesState.updated(
-          message: message,
-          attendees: [data!, ...state.attendees.where((e) => e.id != id)],
+        final response = await _service.uploadPhoto(id, image);
+        return response.when(
+          success: (message, data) => AttendeesState.updated(
+            message: message,
+            attendees: [data!, ...state.attendees.where((e) => e.id != id)],
+          ),
+          failure: (error) => AttendeesState.failed(error: error),
         );
       },
       failure: (error) => AttendeesState.failed(

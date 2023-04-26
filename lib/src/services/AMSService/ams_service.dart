@@ -59,7 +59,7 @@ abstract class AttendeesService {
 
   @MultiPart()
   @POST('/{id}/image')
-  Future<ResponseDto> uploadPhoto(
+  Future<ResponseDto<UserDto>> uploadPhoto(
     @Path() String id,
     @Part(name: 'image') File image,
   );

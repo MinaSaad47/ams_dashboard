@@ -1,11 +1,13 @@
 import 'dart:io';
 
-import 'package:ams_dashboard/src/common/env.dart';
 import 'package:ams_dashboard/src/services/AMSService/dtos/dtos.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
-class AttendeeUpdateWidget extends StatelessWidget {
+import '../common/common.dart';
+
+class AttendeeUpdateWidget extends StatefulWidget {
   const AttendeeUpdateWidget({
     super.key,
     required this.attendee,
@@ -22,15 +24,74 @@ class AttendeeUpdateWidget extends StatelessWidget {
   })? onSubmit;
 
   @override
+  State<AttendeeUpdateWidget> createState() => _AttendeeUpdateWidgetState();
+}
+
+class _AttendeeUpdateWidgetState extends State<AttendeeUpdateWidget> {
+  File? changedImage;
+  @override
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormBuilderState>();
+    final imageHeight = MediaQuery.of(context).size.height / 4;
     return Card(
-      child: Row(
+      child: Column(
         children: [
-          if (attendee.image != null)
-            Image.network(
-              '${EnvVars.apiUrl}/${attendee.image}',
-            ),
+          Stack(
+            alignment: Alignment.bottomCenter,
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                margin: const EdgeInsets.all(5),
+                height: imageHeight,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(1000),
+                  border: Border.all(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                    width: 7,
+                  ),
+                  color: Colors.transparent,
+                ),
+                child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(1000),
+                    color: Colors.transparent,
+                  ),
+                  child: changedImage != null
+                      ? Image.file(changedImage!)
+                      : widget.attendee.image != null
+                          ? Image.network(
+                              '${EnvVars.apiUrl}/${widget.attendee.image}')
+                          : Icon(
+                              Icons.person_outline,
+                              size: imageHeight,
+                            ),
+                ),
+              ),
+              Positioned(
+                bottom: -15,
+                child: CircleAvatar(
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  child: IconButton(
+                    onPressed: () async {
+                      final result = await FilePicker.platform.pickFiles(
+                        allowMultiple: false,
+                        allowedExtensions: ['png'],
+                      );
+                      if (result == null) return;
+                      setState(() {
+                        changedImage = File(result.files[0].path!);
+                      });
+                    },
+                    icon: Icon(
+                      Icons.edit_outlined,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
           Expanded(
             child: Padding(
               padding: const EdgeInsets.all(20),
@@ -44,7 +105,7 @@ class AttendeeUpdateWidget extends StatelessWidget {
                         labelText: 'name',
                       ),
                       name: 'name',
-                      initialValue: attendee.name,
+                      initialValue: widget.attendee.name,
                     ),
                     const SizedBox(height: 10),
                     FormBuilderTextField(
@@ -53,7 +114,7 @@ class AttendeeUpdateWidget extends StatelessWidget {
                         labelText: 'email',
                       ),
                       name: 'email',
-                      initialValue: attendee.email,
+                      initialValue: widget.attendee.email,
                     ),
                     const SizedBox(height: 10),
                     FormBuilderTextField(
@@ -64,16 +125,20 @@ class AttendeeUpdateWidget extends StatelessWidget {
                       name: 'password',
                     ),
                     const SizedBox(height: 10),
-                    if (onSubmit != null) ...[
+                    if (widget.onSubmit != null) ...[
                       ElevatedButton(
                         onPressed: () {
                           final state = formKey.currentState;
                           if (state == null || !state.saveAndValidate()) return;
-                          onSubmit?.call(
+                          widget.onSubmit?.call(
                             name: state.value['name'],
                             email: state.value['email'],
                             password: state.value['password'],
+                            image: changedImage,
                           );
+                          setState(() {
+                            changedImage = null;
+                          });
                         },
                         child: const ListTile(
                           title: Center(child: Text('update')),
