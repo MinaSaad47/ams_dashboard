@@ -72,6 +72,23 @@ abstract class AttendeesService {
     @Path() String id,
     @Body() UpdateUserDto update,
   );
+
+  @GET('/{id}/subjects')
+  Future<ResponseDto<List<SubjectDto>>> getAllSubjects(
+    @Path() String id,
+  );
+
+  @PUT('/{id}/subjects/{subjectId}')
+  Future<ResponseDto> addOneSubject(
+    @Path() String id, {
+    @Path() required String subjectId,
+  });
+
+  @DELETE('/{id}/subjects/{subjectId}')
+  Future<ResponseDto> deleteOneSubject(
+    @Path() String id, {
+    @Path() required String subjectId,
+  });
 }
 
 @RestApi()

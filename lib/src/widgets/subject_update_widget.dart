@@ -56,7 +56,7 @@ class SubjectUpdateWidget extends StatelessWidget {
                       },
                     ),
                     if (onSubmit != null) ...[
-                      const Spacer(),
+                      const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () {
                           final state = formKey.currentState;
@@ -68,8 +68,6 @@ class SubjectUpdateWidget extends StatelessWidget {
                         },
                         child: const ListTile(
                           title: Center(child: Text('update')),
-                          leading: Icon(Icons.done_all),
-                          trailing: Icon(Icons.done_all),
                         ),
                       ),
                     ]

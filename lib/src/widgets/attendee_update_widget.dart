@@ -63,8 +63,8 @@ class AttendeeUpdateWidget extends StatelessWidget {
                       ),
                       name: 'password',
                     ),
+                    const SizedBox(height: 10),
                     if (onSubmit != null) ...[
-                      const Spacer(),
                       ElevatedButton(
                         onPressed: () {
                           final state = formKey.currentState;
@@ -77,8 +77,6 @@ class AttendeeUpdateWidget extends StatelessWidget {
                         },
                         child: const ListTile(
                           title: Center(child: Text('update')),
-                          leading: Icon(Icons.done_all),
-                          trailing: Icon(Icons.done_all),
                         ),
                       ),
                     ]
